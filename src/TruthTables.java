@@ -243,7 +243,7 @@ public class TruthTables {
 						continue;
 					}
 					
-					System.out.println("einfache Bedingungsüberdeckung: ");
+					System.out.println("einfache Bedingungsüberdeckung mit Entscheidungsüberdeckung: ");
 					ArrayList<int[]> result = new ArrayList<>();
 					result.add(this.table.get(i));
 					result.add(this.table.get(j));
