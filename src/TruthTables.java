@@ -12,14 +12,23 @@ public class TruthTables {
 	public ArrayList<int[]> tableExample = new ArrayList<int[]>();
 
 	//Eingabevektore für die Beißpieltabelle 
-	public int[] v1 = { 0, 0, 0, 1 };
-	public int[] v2 = { 1, 0, 0, 0 };
+//	public int[] v1 = { 0, 0, 0, 1 };
+//	public int[] v2 = { 1, 0, 0, 0 };
+//	public int[] v3 = { 0, 1, 0, 0 };
+//	public int[] v4 = { 1, 1, 0, 0 };
+//	public int[] v5 = { 0, 0, 1, 1 };
+//	public int[] v6 = { 1, 0, 1, 0 };
+//	public int[] v7 = { 0, 1, 1, 1 };
+//	public int[] v8 = { 1, 1, 1, 0 };
+	
+	public int[] v1 = { 0, 0, 0, 0 };
+	public int[] v2 = { 0, 0, 1, 0 };
 	public int[] v3 = { 0, 1, 0, 0 };
-	public int[] v4 = { 1, 1, 0, 0 };
-	public int[] v5 = { 0, 0, 1, 1 };
+	public int[] v4 = { 0, 1, 1, 0 };
+	public int[] v5 = { 1, 0, 0, 0 };
 	public int[] v6 = { 1, 0, 1, 0 };
-	public int[] v7 = { 0, 1, 1, 1 };
-	public int[] v8 = { 1, 1, 1, 0 };
+	public int[] v7 = { 1, 1, 0, 0 };
+	public int[] v8 = { 1, 1, 1, 1 };
 
 	//Konstruktor
 	public TruthTables() {
@@ -38,7 +47,7 @@ public class TruthTables {
 
 	public void addTable(ArrayList<int[]> tableExample) {
 		this.table = tableExample;
-		printTable();
+		printTable(this.table);
 	}
 
 	// #############################################################################
@@ -77,11 +86,11 @@ public class TruthTables {
 	// #############################################################################
 	//Den Resultatwert für einen entsprechenden Eingabevektor finden
 
-	public void getResult(int[] vector) {
+	public int getResult(int[] vector) {
 		int length = table.get(0).length - 1;
 		if (length != vector.length) {
 			System.out.println("Eingabevektor hat falsche Groesse");
-			return;
+			return Integer.MIN_VALUE;
 		}
 		for (int i = 0; i < this.table.size(); i++) {
 			boolean notFound = false;
@@ -91,12 +100,12 @@ public class TruthTables {
 				}
 			}
 			if (notFound == false) {
-				System.out.println("Resultatwert: " + table.get(i)[length]);
-				return;
+//				System.out.println("Resultatwert: " + table.get(i)[length]);
+				return table.get(i)[length];
 			}
 		}
 		System.out.println("es wurde keinen Resultatwert für den eingegebenen Eingabevektor gefunden");
-		;
+		return Integer.MIN_VALUE;
 	}
 
 	// #############################################################################
@@ -146,29 +155,139 @@ public class TruthTables {
 		System.out.println("Die Vektore sind keine Nachbare");
 		return;
 	}
-
+	
+	// #############################################################################
+	//Überprüfung auf unterschiedliche Belegungen von Vektoren (für die einfachen Bedingungsüberdeckung)
+	public boolean differentValues(int[] v1, int[] v2) {
+		int length = v1.length - 1;
+		boolean different = true;
+		for (int i = 0; i < length; i++) {
+			if (v1[i] == v2[i]) {
+				different = false;
+				return different;
+			}
+		}
+		return different;
+	}
+	
 	// #############################################################################
 	//Print Methode für die Tabelle
 
-	public void printTable() {
-		if (this.table.isEmpty()) {
+	public void printTable(ArrayList<int[]> tablePrint) {
+		if (tablePrint.isEmpty()) {
 			System.out.println("Es liegt noch keine Werteabelle vor");
 		} else {
-			System.out.println("Wertetabelle:");
-			int length = this.table.get(0).length;
+			int length = tablePrint.get(0).length;
 			for (int j = 0; j < length; j++) {
 				if (j == length - 1) {
 					System.out.print("B" + "  ");
 				} else {
 					System.out.print("A" + j + " ");
 				}
-				for (int k = 0; k < this.table.size(); k++) {
-					System.out.print(this.table.get(k)[j]);
+				for (int k = 0; k < tablePrint.size(); k++) {
+					System.out.print(tablePrint.get(k)[j]);
 					System.out.print(" ");
 				}
 				System.out.println(" ");
 			}
 		}
+	}
+	
+	// #############################################################################
+	//Einfache Bedingungsüberdeckung: Überprüfung, ob jede (atomare) Teilbedingung in jeder
+	//Entscheidung mindestens einmal mit den Werten True und False ausgeführt wurde
+
+	
+	public void simpleConditionCoverage() {
+		for (int i = 0; i < this.table.size(); i++) {
+			for (int j = i + 1; j < this.table.size(); j ++) {
+				if (differentValues(this.table.get(i), this.table.get(j))) {
+					boolean entscheidungsueberdeckung = true;
+					if (this.table.get(i)[this.table.get(i).length - 1] == this.table.get(j)[this.table.get(j).length - 1]) {
+						entscheidungsueberdeckung = false;
+					}
+					System.out.println("Entscheidungsüberdeckung: " + entscheidungsueberdeckung);
+					System.out.println("einfache Bedingungsüberdeckung: ");
+					ArrayList<int[]> result = new ArrayList<>();
+					result.add(this.table.get(i));
+					result.add(this.table.get(j));
+					printTable(result);
+					return;
+				}
+			}
+		}
+		System.out.println("einfache Bedingungsüberdeckung nicht möglich");
+	}
+	
+	// #############################################################################
+	//Einfache Bedingungsüberdeckung: Überprüfung, ob jede (atomare) Teilbedingung in jeder
+	//Entscheidung mindestens einmal mit den Werten True und False ausgeführt wurde. Es wird die Va
+	//riante geliefert, wo auch Entscheidungsüberdeckung enthalten ist
+	
+	public void simpleConditionCoverageWithDecisionCoverage() {
+		for (int i = 0; i < this.table.size(); i++) {
+			for (int j = i + 1; j < this.table.size(); j ++) {
+				if (differentValues(this.table.get(i), this.table.get(j))) {
+					
+					boolean entscheidungsueberdeckung = true;
+					if (this.table.get(i)[this.table.get(i).length - 1] == this.table.get(j)[this.table.get(j).length - 1]) {
+						entscheidungsueberdeckung = false;
+					}
+					
+					if (entscheidungsueberdeckung == false) {
+						continue;
+					}
+					
+					System.out.println("einfache Bedingungsüberdeckung: ");
+					ArrayList<int[]> result = new ArrayList<>();
+					result.add(this.table.get(i));
+					result.add(this.table.get(j));
+					printTable(result);
+					System.out.println("Entscheidungsüberdeckung: " + entscheidungsueberdeckung);
+					return;
+				}
+			}
+		}
+		System.out.println("einfache Bedingungsüberdeckung nicht möglich");
+	}
+	
+	
+	// #############################################################################
+	//Hilfsmethode
+	//Ändert den entsprechenden Wert auf Gegenteil
+	public int[] changeValue(int[] vector, int value) {
+		int length = vector.length - 1;
+		int[] result = new int[length];
+		for (int i = 0; i < length; i++) {
+			result[i] = vector[i];
+		}
+		if (vector[value] == 0) {
+			result[value] = 1;
+		}
+		else if (vector[value] == 1)  {
+			result[value] = 0;
+		}
+		
+		
+		return result;
+	}
+	
+	// #############################################################################
+	//Minimale bestimmende Mehrfachbedingungsüberdeckung
+	
+	public void minimalDeterminingMultipleConditionCoverage() {
+		int length = this.table.get(0).length;
+		ArrayList<int[]> coverage = new ArrayList<>();
+		for (int i = 0; i < this.table.size(); i++) {
+			for (int j = 0; j < length - 1; j++) {
+				if ((getResult(changeValue(this.table.get(i), j)) != this.table.get(i)[length-1]) &&
+						(!coverage.contains(this.table.get(i)))){
+					coverage.add(this.table.get(i));
+				}
+			}
+		}
+		System.out.println("Minimale bestimmende Mehrfachbedingungsüberdeckung");
+		printTable(coverage);
 	}
 
 	// #############################################################################
@@ -218,6 +337,10 @@ public class TruthTables {
 		//falsche Eingabe
 		table.checkNeighbours(vector8, vector9);
 		table.checkNeighbours(vector9, vector8);
+		//einfache Bedingungsüberdeckung
+		table.simpleConditionCoverageWithDecisionCoverage();
+		//Minimale bestimmende Mehrfachbedingungsüberdeckung
+		table.minimalDeterminingMultipleConditionCoverage();
 		
 	}
 
