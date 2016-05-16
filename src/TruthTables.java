@@ -198,7 +198,7 @@ public class TruthTables {
 	//Entscheidung mindestens einmal mit den Werten True und False ausgeführt wurde
 
 	
-	public void simpleConditionCoverage() {
+	public ArrayList<int[]> simpleConditionCoverage() {
 		for (int i = 0; i < this.table.size(); i++) {
 			for (int j = i + 1; j < this.table.size(); j ++) {
 				if (differentValues(this.table.get(i), this.table.get(j))) {
@@ -206,17 +206,22 @@ public class TruthTables {
 					if (this.table.get(i)[this.table.get(i).length - 1] == this.table.get(j)[this.table.get(j).length - 1]) {
 						entscheidungsueberdeckung = false;
 					}
-					System.out.println("Entscheidungsüberdeckung: " + entscheidungsueberdeckung);
-					System.out.println("einfache Bedingungsüberdeckung: ");
+					if (entscheidungsueberdeckung == true) {
+						continue;
+					}
+					System.out.println("einfache Bedingungsüberdeckung ohne Entscheidungsüberdeckung: ");
 					ArrayList<int[]> result = new ArrayList<>();
 					result.add(this.table.get(i));
 					result.add(this.table.get(j));
 					printTable(result);
-					return;
+					System.out.println("Entscheidungsüberdeckung: " + entscheidungsueberdeckung);
+					return result;
 				}
 			}
 		}
 		System.out.println("einfache Bedingungsüberdeckung nicht möglich");
+		ArrayList<int[]> noResult = new ArrayList<>();
+		return noResult;
 	}
 	
 	// #############################################################################
@@ -224,7 +229,7 @@ public class TruthTables {
 	//Entscheidung mindestens einmal mit den Werten True und False ausgeführt wurde. Es wird die Va
 	//riante geliefert, wo auch Entscheidungsüberdeckung enthalten ist
 	
-	public void simpleConditionCoverageWithDecisionCoverage() {
+	public ArrayList<int[]> simpleConditionCoverageWithDecisionCoverage() {
 		for (int i = 0; i < this.table.size(); i++) {
 			for (int j = i + 1; j < this.table.size(); j ++) {
 				if (differentValues(this.table.get(i), this.table.get(j))) {
@@ -244,11 +249,13 @@ public class TruthTables {
 					result.add(this.table.get(j));
 					printTable(result);
 					System.out.println("Entscheidungsüberdeckung: " + entscheidungsueberdeckung);
-					return;
+					return result;
 				}
 			}
 		}
 		System.out.println("einfache Bedingungsüberdeckung nicht möglich");
+		ArrayList<int[]> noResult = new ArrayList<>();
+		return noResult;
 	}
 	
 	
@@ -275,7 +282,7 @@ public class TruthTables {
 	// #############################################################################
 	//Minimale bestimmende Mehrfachbedingungsüberdeckung
 	
-	public void minimalDeterminingMultipleConditionCoverage() {
+	public ArrayList<int[]> minimalDeterminingMultipleConditionCoverage() {
 		int length = this.table.get(0).length;
 		ArrayList<int[]> coverage = new ArrayList<>();
 		for (int i = 0; i < this.table.size(); i++) {
@@ -288,6 +295,7 @@ public class TruthTables {
 		}
 		System.out.println("Minimale bestimmende Mehrfachbedingungsüberdeckung");
 		printTable(coverage);
+		return coverage;
 	}
 
 	// #############################################################################
@@ -313,31 +321,33 @@ public class TruthTables {
 
 		table.addTable(table.tableExample);
 
-		table.getResult(vector1);
-
-		//Nachbare
-		table.checkNeighbours(vector1, vector2);
-		table.checkNeighbours(vector2, vector1);
-		table.checkNeighbours(vector2, vector3);
-		table.checkNeighbours(vector3, vector2);
-		table.checkNeighbours(vector3, vector4);
-		table.checkNeighbours(vector4, vector3);
-		table.checkNeighbours(vector4, vector5);
-		table.checkNeighbours(vector5, vector4);
-		table.checkNeighbours(vector5, vector6);
-		table.checkNeighbours(vector6, vector5);
-		table.checkNeighbours(vector6, vector7);
-		table.checkNeighbours(vector7, vector6);
-		table.checkNeighbours(vector7, vector8);
-		table.checkNeighbours(vector8, vector7);
-		// keine Nachbare
-		table.checkNeighbours(vector8, vector1);
-		table.checkNeighbours(vector1, vector8);
-		table.checkNeighbours(vector1, vector3);
-		//falsche Eingabe
-		table.checkNeighbours(vector8, vector9);
-		table.checkNeighbours(vector9, vector8);
-		//einfache Bedingungsüberdeckung
+//		table.getResult(vector1);
+//
+//		//Nachbare
+//		table.checkNeighbours(vector1, vector2);
+//		table.checkNeighbours(vector2, vector1);
+//		table.checkNeighbours(vector2, vector3);
+//		table.checkNeighbours(vector3, vector2);
+//		table.checkNeighbours(vector3, vector4);
+//		table.checkNeighbours(vector4, vector3);
+//		table.checkNeighbours(vector4, vector5);
+//		table.checkNeighbours(vector5, vector4);
+//		table.checkNeighbours(vector5, vector6);
+//		table.checkNeighbours(vector6, vector5);
+//		table.checkNeighbours(vector6, vector7);
+//		table.checkNeighbours(vector7, vector6);
+//		table.checkNeighbours(vector7, vector8);
+//		table.checkNeighbours(vector8, vector7);
+//		// keine Nachbare
+//		table.checkNeighbours(vector8, vector1);
+//		table.checkNeighbours(vector1, vector8);
+//		table.checkNeighbours(vector1, vector3);
+//		//falsche Eingabe
+//		table.checkNeighbours(vector8, vector9);
+//		table.checkNeighbours(vector9, vector8);
+		//einfache Bedingungsüberdeckung ohne Entscheidungsüberdeckung
+		table.simpleConditionCoverage();
+		//einfache Bedingungsüberdeckung mit Entscheidungsüberdeckung
 		table.simpleConditionCoverageWithDecisionCoverage();
 		//Minimale bestimmende Mehrfachbedingungsüberdeckung
 		table.minimalDeterminingMultipleConditionCoverage();
